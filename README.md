@@ -1,4 +1,4 @@
-# NGS-Pipe
+# NGS-Pipe(this text is from the original https://github.com/cbg-ethz/NGS-pipe）
 
 ## Description
 NGS-Pipe provides analyses for large scale DNA and RNA sequencing experiments.
