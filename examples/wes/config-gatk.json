@@ -1,0 +1,231 @@
+{
+    "resources":{
+        "H_sapiens_hg19":{
+            "reference": "../resources/ucsc.hg19.fasta",
+            "referenceFai": "../resources/ucsc.hg19.fasta.fai",
+            "referenceDict": "../resources/ucsc.hg19.dict",
+            "regions": "../resources/nexterarapidcapture_expandedexome_targetedregions.bed",
+            "bwaIndex": "../resources/ucsc.hg19.fasta",
+            "Mills_indels": "../resources/Mills_and_1000G_gold_standard.indels.hg19.sites.vcf",
+            "1000G_indels": "../resources/1000G_phase1.indels.hg19.sites.vcf",
+            "dbSNP": "../resources/dbsnp_138.hg19.vcf"
+	},
+        "general":{
+            "sequencingAdapter": "../resources/TruSeq2-PE.fa"
+        }
+    },
+    "tools":{
+        "bwa":{
+            "mem":{
+                "call":"bwa mem ",
+                "params": "-M ",
+                "scratch": "2000",
+                "memory": "20000",
+                "time": "235",
+                "threads": 8
+            }
+        },
+        "samtools":{
+            "call": "samtools ",
+            "flagstat":{
+                "scratch":"2000",
+                "mem": "20000",
+                "time": "20",
+                "threads": 8,
+                "params": ""
+            },
+            "index":{
+                "scratch": "2000",
+                "mem": "20000",
+                "time": "100",
+                "threads": 8
+            },
+            "mpileup":{
+                "params": "-B -q 25 -Q 20",
+                "outputTags": "DP,DP4,SP,DPR,DV",
+                "scratch": "8000",
+                "mem": "10000",
+                "time": "1400",
+                "threads": 8
+            },
+            "rmSecondary":{
+                "scratch": "4000",
+                "mem": "10000",
+                "time": "235",
+                "threads": 8
+            },
+            "rmDuplicates":{
+                "threads": 8,
+                "scratch": "2000",
+                "mem": "10000",
+                "time": "235"
+            }
+        },
+        "picard":{
+            "call": "picard -Xmx10G ",
+            "markduplicates":{
+                "removeDuplicates": "false",
+                "createIndex": "false",
+                "quiet": "false",
+                "mem": "12000",
+                "time": "1400",
+                "scratch": "12000",
+                "threads": 8,
+                "params": "ASSUME_SORTED=true MAX_FILE_HANDLES_FOR_READ_ENDS_MAP=1000 MAX_RECORDS_IN_RAM=500000 REMOVE_DUPLICATES=false CREATE_INDEX=true"
+            },
+            "fixMateInformation":{
+                "sortOrder": "coordinate",
+                "mem": "12000",
+                "time": "1400",
+                "scratch": "12000",
+                "threads": 8,
+                "assume_sorted": "false",
+                "params": "MAX_RECORDS_IN_RAM=500000"
+            },
+            "mergeBams":{
+                "threads": 8,
+                "mem": "12000",
+                "time": "1400",
+                "scratch": "12000",
+                "assume_sorted": "true",
+                "useOrphans": "N",
+                "params": ""
+            }
+        },
+        "varscan":{
+            "call": "varscan -Xmx20g ",
+            "somatic":{
+                "params": "--min-coverage 10 --strand-filter 1 --output-vcf 1 --min-var-freq 0 --somatic-p-value 0.99 --p-value 0.99 ",
+                "threads" : 8,
+                "mem": "24000",
+                "time": "1400",
+                "scratch": "24000"
+            }
+        },
+        "fastqc":{
+            "file" : "fastqc",
+            "call" : "fastqc",
+            "scratch": "10000",
+            "mem": "10000",
+            "time": "60",
+            "threads": 8,
+            "params": ""
+        },
+        "qualimap":{
+            "call": "qualimap ",
+            "regions": "../resources/nexterarapidcapture_expandedexome_targetedregions.bed_qual.bed",
+            "threads": 8,
+            "mem": "24000",
+            "time": "1400",
+            "scratch": "16000",
+            "params": ""
+        },
+        "trimmomatic": {
+            "call": "trimmomatic -Xmx12G ",
+            "scratch": "1000",
+            "mem": "20000",
+            "time": "640",
+            "paired": {
+                "slidingwindow": "4",
+                "threads": 8,
+                "phred": "-phred33",
+                "mode": "PE",
+                "minQual": "2",
+                "seedmismatches": "1",
+                "palindrom": "30",
+                "min_adapt_len": "1",
+                "keep_both": "true",
+                "minlen": "50",
+                "score": "7"
+            }
+        },
+        "GATK":{
+            "call": "java -jar /results/NGSpipe2018/soft/gatk-3.5/GenomeAnalysisTK.jar ",
+            "realign" : {
+                "targetCreator":{
+                    "threads": 8,
+                    "mem": "10000",
+                    "time": "1400",
+                    "scratch": "8000",
+                    "params": ""
+                },
+                "realignIndels":{
+                    "threads": 8,
+                    "mem": "24000",
+                    "time": "1400",
+                    "scratch": "24000",
+                    "params": ""                    
+                },
+                "Mills_indels": "Y",
+                "1000G_indels": "Y",
+                "realignFilesFromExperimentTogether" : "Y"
+            },
+            "baseRecalibrator":{
+                "threads": 8,
+                "mem": "24000",
+                "time": "1400",
+                "scratch": "24000",
+                "params": "",                
+                "Mills_indels": "Y",
+                "1000G_indels": "Y",
+                "dbSNP": "Y"
+            },
+            "baseRecalibratorPrintReads":{
+                "threads": 8,
+                "mem": "20000",
+                "time": "100",
+                "scratch": "2000",
+                "params": ""
+            },
+            "analyzeCovariates":{
+                "expRscript": "export PATH=/path/to/Rscript/:$PATH",
+                "threads": 8,
+                "mem": "16000",
+                "time": "600",
+                "scratch": "16000",
+                "params": ""
+            },
+            "reassignOneMappingQualityFilter":{
+                "threads": 8,
+                "mem": "16000",
+                "time": "1400",
+                "scratch": "16000",
+                "oldQual": "255",
+                "newQual": "60"
+            },
+            "haplotypeCaller":{
+                "threads": 8,
+                "mem": "16000",
+                "time": "1400",
+                "scratch": "16000",
+                "params": ""
+            },
+            "genotypeGVCFs":{
+                "threads": 8,
+                "mem": "16000",
+                "time": "1400",
+                "scratch": "16000",
+                "params": ""
+            },
+            "combineVariants":{
+                "threads": 8,
+                "mem": "5000",
+                "time": "500",
+                "scratch": "5000",
+                "specificParams": "-minN 2 -genotypeMergeOptions PRIORITIZE -priority varscan,mutect2,vardict ",
+                "mutect2" : "Y",
+                "vardict": "Y",
+                "varscansomatic": "Y",
+                "strelka1": "N",
+                "strelka2": "N"
+            },
+            "mutect2":{
+                "threads": 8,
+                "mem": "10000",
+                "time": "1400",
+                "scratch": "16000",
+                "params": ""
+            }
+        }
+    }
+}
