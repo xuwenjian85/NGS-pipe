@@ -4,7 +4,7 @@ from snakemake.utils import R
 SAMPLEMAPPING = 'ICUsamples.tsv'
 # SAMPLEMAPPING = 'sample_mapping.tsv'
 FASTQDIR = 'sra/'
-OUTDIR   = 'ICU-out/'
+OUTDIR   = 'ICU-out1/'
 TMPDIR   = 'tmp/'
 
 ORGANISM = 'H_sapiens_hg19'
@@ -20,4 +20,9 @@ SAMPLENAMES = getSampleNames()
 rule SRA051153:
     input:
        expand(HAPLOTYPECALLEROUT + '{sample}.g.vcf', sample = SAMPLENAMES),
-       expand(HAPLOTYPECALLEROUT + '{sample}.vcf', sample = SAMPLENAMES)
+       expand(HAPLOTYPECALLEROUT + '{sample}.vcf', sample = SAMPLENAMES),
+       expand(HAPLOTYPECALLEROUT + '{sample}_snps.vcf', sample = SAMPLENAMES),
+       expand(HAPLOTYPECALLEROUT + '{sample}_indels.vcf', sample = SAMPLENAMES),
+       expand(HAPLOTYPECALLEROUT + '{sample}_filtered_snps.vcf', sample = SAMPLENAMES),
+       expand(HAPLOTYPECALLEROUT + '{sample}_filtered_indels.vcf', sample = SAMPLENAMES),
+       expand(ANNOVAROUT+ '{sample}.hg19_multianno.vcf', sample= SAMPLENAMES) 

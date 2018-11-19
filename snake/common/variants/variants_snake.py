@@ -158,6 +158,7 @@ rule gatkHaplotypeCaller:
     shell:
         ('{config[tools][GATK][call]} ' +
         '-T HaplotypeCaller ' +
+        '-nct {threads} ' +
         '{params.params} ' + 
         '-R {input.reference} ' + 
         '-I {input.bam} ' +
@@ -193,6 +194,36 @@ rule gatkGenotypeGVCFs:
         '-R {input.reference} ' + 
         '{params.input} ' +
         '-o {output.vcf}')
+
+# one sample GATK GVCF file --> one sample vcf file  
+rule gatkGenotypeGVCFsForOneSample:
+    input:
+        vcf = HAPLOTYPECALLEROUT + '{sample}.g.vcf',
+        reference = config['resources'][ORGANISM]['reference'],
+    output:
+        vcf = HAPLOTYPECALLEROUT + '{sample}.vcf',
+    params:
+        lsfoutfile = HAPLOTYPECALLEROUT + '{sample}.vcf.lsfout.log',
+        lsferrfile = HAPLOTYPECALLEROUT + '{sample}.vcf.lsferr.log',
+        scratch = config['tools']['GATK']['genotypeGVCFs']['scratch'],
+        mem = config['tools']['GATK']['genotypeGVCFs']['mem'],
+        time = config['tools']['GATK']['genotypeGVCFs']['time'],
+        reference = config['resources'][ORGANISM]['reference'],
+        params = config['tools']['GATK']['genotypeGVCFs']['params'],
+    threads:
+        config['tools']['GATK']['genotypeGVCFs']['threads']
+    benchmark:
+        HAPLOTYPECALLEROUT + '{sample}.vcf.benchmark'
+    log:
+        HAPLOTYPECALLEROUT + '{sample}.vcf.log'
+    shell:
+        ('{config[tools][GATK][call]} ' +
+        '-T GenotypeGVCFs ' +
+        '{params.params}' +
+        '-R {input.reference} ' +
+        '--variant {input.vcf} ' +
+        '-o {output.vcf}')
+
 
 def getDataBasisForMutect2():
     out = []

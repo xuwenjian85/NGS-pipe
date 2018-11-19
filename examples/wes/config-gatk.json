@@ -4,14 +4,15 @@
             "reference": "../resources/ucsc.hg19.fasta",
             "referenceFai": "../resources/ucsc.hg19.fasta.fai",
             "referenceDict": "../resources/ucsc.hg19.dict",
-            "regions": "../resources/nexterarapidcapture_expandedexome_targetedregions.bed",
+            "regions": "../resources/S07604514_Padded.bed",
             "bwaIndex": "../resources/ucsc.hg19.fasta",
             "Mills_indels": "../resources/Mills_and_1000G_gold_standard.indels.hg19.sites.vcf",
             "1000G_indels": "../resources/1000G_phase1.indels.hg19.sites.vcf",
-            "dbSNP": "../resources/dbsnp_138.hg19.vcf"
-	},
+            "dbSNP": "../resources/dbsnp_138.hg19.vcf",
+            "annovarhumandb": "/results/NGSpipe2018/soft/annovar/humandb"
+        },
         "general":{
-            "sequencingAdapter": "../resources/TruSeq2-PE.fa"
+            "sequencingAdapter": "../resources/TruSeq3-PE-2.fa"
         }
     },
     "tools":{
@@ -31,14 +32,14 @@
                 "scratch":"2000",
                 "mem": "20000",
                 "time": "20",
-                "threads": 8,
+                "threads": 2,
                 "params": ""
             },
             "index":{
                 "scratch": "2000",
                 "mem": "20000",
                 "time": "100",
-                "threads": 8
+                "threads": 2
             },
             "mpileup":{
                 "params": "-B -q 25 -Q 20",
@@ -52,10 +53,10 @@
                 "scratch": "4000",
                 "mem": "10000",
                 "time": "235",
-                "threads": 8
+                "threads": 4
             },
             "rmDuplicates":{
-                "threads": 8,
+                "threads": 4,
                 "scratch": "2000",
                 "mem": "10000",
                 "time": "235"
@@ -70,7 +71,7 @@
                 "mem": "12000",
                 "time": "1400",
                 "scratch": "12000",
-                "threads": 8,
+                "threads": 2,
                 "params": "ASSUME_SORTED=true MAX_FILE_HANDLES_FOR_READ_ENDS_MAP=1000 MAX_RECORDS_IN_RAM=500000 REMOVE_DUPLICATES=false CREATE_INDEX=true"
             },
             "fixMateInformation":{
@@ -78,12 +79,12 @@
                 "mem": "12000",
                 "time": "1400",
                 "scratch": "12000",
-                "threads": 8,
+                "threads": 2,
                 "assume_sorted": "false",
                 "params": "MAX_RECORDS_IN_RAM=500000"
             },
             "mergeBams":{
-                "threads": 8,
+                "threads": 4,
                 "mem": "12000",
                 "time": "1400",
                 "scratch": "12000",
@@ -121,13 +122,13 @@
             "params": ""
         },
         "trimmomatic": {
-            "call": "trimmomatic -Xmx12G ",
+            "call": "trimmomatic -Xmx20G ",
             "scratch": "1000",
             "mem": "20000",
             "time": "640",
             "paired": {
                 "slidingwindow": "4",
-                "threads": 8,
+                "threads": 6,
                 "phred": "-phred33",
                 "mode": "PE",
                 "minQual": "2",
@@ -150,7 +151,7 @@
                     "params": ""
                 },
                 "realignIndels":{
-                    "threads": 8,
+                    "threads": 2,
                     "mem": "24000",
                     "time": "1400",
                     "scratch": "24000",
@@ -194,21 +195,37 @@
                 "newQual": "60"
             },
             "haplotypeCaller":{
-                "threads": 8,
+                "threads": 4,
                 "mem": "16000",
                 "time": "1400",
                 "scratch": "16000",
                 "params": ""
             },
             "genotypeGVCFs":{
-                "threads": 8,
+                "threads": 4,
                 "mem": "16000",
                 "time": "1400",
                 "scratch": "16000",
                 "params": ""
             },
+            "SelectVariants":{
+                "threads": 1,
+                "mem": "16000",
+                "time": "1400",
+                "scratch": "16000",
+                "params": ""
+            },
+            "VariantFiltration":{
+                "threads": 1,
+                "mem": "16000",
+                "time": "1400",
+                "scratch": "16000",
+                "params": "",
+                "snpfilterexpression": "QD < 2.0 || FS > 60.0 || MQ < 40.0 || MQRankSum < -12.5 || ReadPosRankSum < -8.0",
+                "indelfilterexpression": "QD < 2.0 || FS > 200.0 || ReadPosRankSum < -20.0"
+            },
             "combineVariants":{
-                "threads": 8,
+                "threads": 1,
                 "mem": "5000",
                 "time": "500",
                 "scratch": "5000",
@@ -226,6 +243,13 @@
                 "scratch": "16000",
                 "params": ""
             }
+        },
+        "annovar":{
+            "call": "/results/NGSpipe2018/soft/annovar/table_annovar.pl ",
+            "threads": 1,
+            "mem": "10000", 
+            "params": "--buildver hg19 --remove -nastring . -vcfinput", 
+            "protocol": "refGene,cytoBand,exac03,avsnp147,dbnsfp30a -operation g,r,f,f,f",
         }
     }
 }

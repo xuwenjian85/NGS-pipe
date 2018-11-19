@@ -28,14 +28,14 @@
                 "scratch":"2000",
                 "mem": "4000",
                 "time": "20",
-                "threads": 1,
+                "threads": 8,
                 "params": ""
             },
             "index":{
                 "scratch": "2000",
                 "mem": "2000",
                 "time": "100",
-                "threads": 1
+                "threads": 8
             },
             "mpileup":{
                 "params": "-B -q 25 -Q 20",
@@ -43,16 +43,16 @@
                 "scratch": "8000",
                 "mem": "8000",
                 "time": "1400",
-                "threads": 1
+                "threads": 8
             },
             "rmSecondary":{
                 "scratch": "4000",
                 "mem": "4000",
                 "time": "235",
-                "threads": 1
+                "threads": 8
             },
             "rmDuplicates":{
-                "threads": 2,
+                "threads": 8,
                 "scratch": "2000",
                 "mem": "2000",
                 "time": "235"
@@ -67,7 +67,7 @@
                 "mem": "12000",
                 "time": "1400",
                 "scratch": "12000",
-                "threads": 1,
+                "threads": 8,
                 "params": "ASSUME_SORTED=true MAX_FILE_HANDLES_FOR_READ_ENDS_MAP=1000 MAX_RECORDS_IN_RAM=500000 REMOVE_DUPLICATES=false CREATE_INDEX=true"
             },
             "fixMateInformation":{
@@ -75,12 +75,12 @@
                 "mem": "12000",
                 "time": "1400",
                 "scratch": "12000",
-                "threads": 1,
+                "threads": 8,
                 "assume_sorted": "false",
                 "params": "MAX_RECORDS_IN_RAM=500000"
             },
             "mergeBams":{
-                "threads": 1,
+                "threads": 8,
                 "mem": "12000",
                 "time": "1400",
                 "scratch": "12000",
@@ -93,25 +93,25 @@
             "call": "varscan -Xmx20g ",
             "somatic":{
                 "params": "--min-coverage 10 --strand-filter 1 --output-vcf 1 --min-var-freq 0 --somatic-p-value 0.99 --p-value 0.99 ",
-                "threads" : 1,
+                "threads" : 8,
                 "mem": "24000",
                 "time": "1400",
                 "scratch": "24000"
             }
         },
-        "fastqc": {
+        "fastqc":{
             "file" : "fastqc",
             "call" : "fastqc",
             "scratch": "10000",
             "mem": "10000",
             "time": "60",
-            "threads": 1,
+            "threads": 8,
             "params": ""
         },
         "qualimap":{
             "call": "qualimap ",
             "regions": "../resources/nexterarapidcapture_expandedexome_targetedregions.bed_qual.bed",
-            "threads": 2,
+            "threads": 8,
             "mem": "24000",
             "time": "1400",
             "scratch": "16000",
@@ -124,7 +124,7 @@
             "time": "640",
             "paired": {
                 "slidingwindow": "4",
-                "threads": 4,
+                "threads": 8,
                 "phred": "-phred33",
                 "mode": "PE",
                 "minQual": "2",

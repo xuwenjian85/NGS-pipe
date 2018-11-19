@@ -118,7 +118,9 @@ def getBamsToMerge(wildcards):
     allBams = getAlignerBams()
     for bam in allBams:
         if wildcards.sample == bam.split("/")[0]: 
-            out.append(MERGEBAMSIN + bam)
+            out.append(MERGEBAMSIN + bam) 
+    if not allBams:
+        return ['ERROR-allBams']
     if not out:
         #print(wildcards)
         return ['ERROR']
@@ -185,7 +187,7 @@ rule samtools_remove_secondary_alignments:
     threads:
         config['tools']['samtools']['rmSecondary']['threads']
     shell:
-        '{config[tools][samtools][call]} view -bh -F 256 {input.bam} > {output.bam}'
+        '{config[tools][samtools][call]} view -bh -F 256 -@ {threads} {input.bam} > {output.bam}'
 
 # This rule markes PCR duplicates
 if not 'MARKPCRDUBLICATESIN' in globals():
@@ -242,7 +244,7 @@ rule samtools_remove_PCR_duplicates:
     benchmark:
         REMOVEPCRDUBLICATESOUT + '{sample}.bam.benchmark'
     shell:
-        '{config[tools][samtools][call]} view -bh -F 0x400 {input.bam} > {output.bam}'
+        '{config[tools][samtools][call]} view -bh -F 0x400 -@ {threads} {input.bam} > {output.bam}'
 
 # Rule to replace a certain mapping quality with a specified one
 # This is a GATK tool
@@ -626,6 +628,7 @@ rule gatk_base_recalibration:
     shell:
         ('{config[tools][GATK][call]} ' +
         '-T PrintReads ' +
+        '-nct {threads} ' +
         '-R {input.reference} ' +
         '-I {input.bam} ' +
         '-o {output.bam} ' +

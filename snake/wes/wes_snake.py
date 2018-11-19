@@ -152,6 +152,8 @@ include: "../common/copy_number/copy_number_snake.py"
 include: "../common/variants/variants_snake.py"
 include: "../common/variants/somatic_seq_snake.py"
 include: "../common/variants/variant_mod_snake.py"
+include: "../common/variants/variant_HardFilt_snake.py"
+include: "../common/annotate/annovar_snake.py"
 
 # This rule defines which files should be created
 rule wes:
